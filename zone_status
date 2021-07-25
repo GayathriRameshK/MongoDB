@@ -1,0 +1,15 @@
+ persons.datanew
+                        shard key: { "personid" : 1 }
+                        unique: false
+                        balancing: true
+                        chunks:
+                                srs1    2
+                                srs2    1
+                                srs3    1
+                        { "personid" : { "$minKey" : 1 } } -->> { "personid" : 1000 } on : srs1 Timestamp(1, 0)
+                        { "personid" : 1000 } -->> { "personid" : 2000 } on : srs1 Timestamp(1, 1)
+                        { "personid" : 2000 } -->> { "personid" : 3000 } on : srs3 Timestamp(1, 2)
+                        { "personid" : 3000 } -->> { "personid" : { "$maxKey" : 1 } } on : srs2 Timestamp(1, 3)
+                         tag: recent  { "personid" : 1000 } -->> { "personid" : 2000 }
+                         tag: archive  { "personid" : 2000 } -->> { "personid" : 3000 }
+        {  "_id" : "photoshare",  "primary" : "srs2",  "partitioned" : true,  "version" : {  "uuid" : UUID("83d39771-6e17-4a58-b0ef-8481ad2f2f4a"),  "lastMod" : 1 } }
